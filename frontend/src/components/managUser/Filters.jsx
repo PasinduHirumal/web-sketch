@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, CheckCircle2, ArrowDownUp } from 'lucide-react';
+import { Shield, CheckCircle2, ArrowDownUp, ChevronDown } from 'lucide-react';
 import { UserRole } from '../../lib/roles';
 
 export default function Filters({
@@ -37,18 +37,13 @@ export default function Filters({
                                 setPage(1);
                             }}
                             className="w-full pl-3 pr-10 py-2.5 bg-gray-50 hover:bg-gray-100/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/70 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white text-sm appearance-none shadow-sm cursor-pointer transition-all"
-                            style={{
-                                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                                backgroundPosition: 'right 0.75rem center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundSize: '1.25em 1.25em'
-                            }}
                         >
                             <option value="">All Roles</option>
                             <option value={UserRole.USER}>User</option>
                             <option value={UserRole.ADMIN}>Admin</option>
                             <option value={UserRole.SUPER_ADMIN}>Super Admin</option>
                         </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                     </div>
                 </div>
 
@@ -66,17 +61,12 @@ export default function Filters({
                                 setPage(1);
                             }}
                             className="w-full pl-3 pr-10 py-2.5 bg-gray-50 hover:bg-gray-100/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/70 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white text-sm appearance-none shadow-sm cursor-pointer transition-all"
-                            style={{
-                                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                                backgroundPosition: 'right 0.75rem center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundSize: '1.25em 1.25em'
-                            }}
                         >
                             <option value="">All Statuses</option>
                             <option value="true">Active</option>
                             <option value="false">Inactive</option>
                         </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                     </div>
                 </div>
 
@@ -94,16 +84,11 @@ export default function Filters({
                                 setPage(1);
                             }}
                             className="w-full pl-3 pr-10 py-2.5 bg-gray-50 hover:bg-gray-100/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/70 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white text-sm appearance-none shadow-sm cursor-pointer transition-all"
-                            style={{
-                                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                                backgroundPosition: 'right 0.75rem center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundSize: '1.25em 1.25em'
-                            }}
                         >
                             <option value="DESC">Newest First</option>
                             <option value="ASC">Oldest First</option>
                         </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                     </div>
                 </div>
             </div>
