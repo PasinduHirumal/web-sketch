@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import useAuthStore from "../lib/authStore";
-import { getHomePathByRole } from "../lib/roles";
+import useAuthStore from "../../lib/authStore";
+import { getHomePathByRole } from "../../lib/roles";
 import { Eye, EyeOff, Mail, Lock, User, Sparkles, ShieldCheck, ArrowLeft, BookOpen } from "lucide-react";
-import GoogleLoginButton from "../common/GoogleLoginButton";
+import GoogleLoginButton from "../../common/GoogleLoginButton";
 
 export default function Auth() {
   const navigate = useNavigate();

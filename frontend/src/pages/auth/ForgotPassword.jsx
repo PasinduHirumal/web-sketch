@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Loader2, ArrowLeft, Sparkles } from "lucide-react";
-import { axiosInstance } from "../lib/axiosInstance";
+import { axiosInstance } from "../../lib/axiosInstance";
 import toast from "react-hot-toast";
 
 export default function ForgotPassword() {

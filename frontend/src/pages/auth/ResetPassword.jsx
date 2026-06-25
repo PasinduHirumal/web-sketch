@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { BookOpen, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
-import { axiosInstance } from "../lib/axiosInstance";
+import { axiosInstance } from "../../lib/axiosInstance";
 import toast from "react-hot-toast";
-import useAuthStore from "../lib/authStore";
-import { getHomePathByRole } from "../lib/roles";
+import useAuthStore from "../../lib/authStore";
+import { getHomePathByRole } from "../../lib/roles";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();

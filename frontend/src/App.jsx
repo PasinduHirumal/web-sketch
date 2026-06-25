@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Route, useLocation, Navigate } from "react-router-dom";
 import useAuthStore from "./lib/authStore";
 import { isAdmin, isSuperAdmin } from "./lib/roles";
@@ -15,20 +15,20 @@ import FullPageLayout from "./layouts/FullPageLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import PageWithNavbar from "./layouts/PageWithNavbar";
 
-import NotFound from "./pages/NotFound";
-import About from "./pages/about/About";
-import Contact from "./pages/contact/Contact";
 import Home from "./pages/home/Home";
+const About = lazy(() => import("./pages/about/About"));
+const Contact = lazy(() => import("./pages/contact/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Auth
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 
 // Admin
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import ManageUsers from "./pages/admin/ManageUsers";
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const ManageUsers = lazy(() => import("./pages/admin/ManageUsers"));
 
 export default function App() {
   const user = useAuthStore((s) => s.user);
