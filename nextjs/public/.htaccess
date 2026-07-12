@@ -1,0 +1,19 @@
+# Disable directory index browsing
+Options -Indexes
+
+# Set the default index file
+DirectoryIndex index.html
+
+# Enable rewriting for clean URLs and SPA routing
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # If the requested path is a real file or directory, serve it directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # For any other route, serve index.html to let the client-side Next.js router handle it
+  RewriteRule ^ index.html [L]
+</IfModule>

@@ -1,9 +1,10 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import useAuthStore from "./authStore";
 
-export const API_URL = process.env.NEXT_PUBLIC_APP_NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_APP_PRODUCTION_API_URL
-    : process.env.NEXT_PUBLIC_APP_DEVELOPMENT_API_URL || "http://localhost:5000";
+export const API_URL =
+    (process.env.NEXT_PUBLIC_APP_NODE_ENV === "production" || process.env.NODE_ENV === "production")
+        ? (process.env.NEXT_PUBLIC_APP_PRODUCTION_API_URL)
+        : (process.env.NEXT_PUBLIC_APP_DEVELOPMENT_API_URL || "http://localhost:5000");
 
 export const axiosInstance = axios.create({
     baseURL: `${API_URL}/`,
