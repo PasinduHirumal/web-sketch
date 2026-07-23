@@ -87,3 +87,73 @@
 .dark *::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.4) !important;
 }
+
+
+/* Tiptap / Rich Text Styles */
+.ProseMirror {
+  outline: none !important;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.ProseMirror h2, .rich-text-rendered h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+  margin-bottom: 0.375rem;
+}
+
+.ProseMirror h3, .rich-text-rendered h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.ProseMirror ul, .rich-text-rendered ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ProseMirror ol, .rich-text-rendered ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ProseMirror li, .rich-text-rendered li {
+  margin-bottom: 0.25rem;
+}
+
+.ProseMirror strong, .rich-text-rendered strong {
+  font-weight: 600;
+}
+
+.ProseMirror em, .rich-text-rendered em {
+  font-style: italic;
+}
+
+.ProseMirror u, .rich-text-rendered u {
+  text-decoration: underline;
+}
+
+.ProseMirror s, .rich-text-rendered s {
+  text-decoration: line-through;
+}
+
+.ProseMirror a, .rich-text-rendered a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.dark .ProseMirror a, .dark .rich-text-rendered a {
+  color: #60a5fa;
+}
