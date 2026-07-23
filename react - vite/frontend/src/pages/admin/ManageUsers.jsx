@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Mail, Shield, ShieldAlert, ShieldCheck, Search, Filter, CheckCircle, Ban } from 'lucide-react';
+import { Mail, Shield, ShieldAlert, ShieldCheck, Search, Filter, CheckCircle, Ban, UserPlus, X } from 'lucide-react';
 import { axiosInstance } from '../../lib/axiosInstance';
 import { confirmAction } from '../../lib/confirmAction';
 import { UserRole, isSuperAdmin } from '../../lib/roles';
@@ -10,33 +11,74 @@ import AdminFilterMenu from '../../common/AdminFilterMenu';
 import Filters from '../../components/managUser/Filters';
 
 export default function ManageUsers() {
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Read initial URL params
+    const urlSearch = searchParams.get("search") || "";
+    const urlRole = searchParams.get("role") || "";
+    const urlStatus = searchParams.get("status") || "";
+    const urlSort = searchParams.get("sort") || "DESC";
+    const urlPage = parseInt(searchParams.get("page") || "1", 10) || 1;
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(urlPage);
     const [totalPages, setTotalPages] = useState(1);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState(urlSearch);
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(urlSearch);
 
-    // Active filters used for API call
-    const [roleFilter, setRoleFilter] = useState("");
-    const [statusFilter, setStatusFilter] = useState("");
-    const [sortOrder, setSortOrder] = useState("DESC");
+    // Active filters
+    const [roleFilter, setRoleFilter] = useState(urlRole);
+    const [statusFilter, setStatusFilter] = useState(urlStatus);
+    const [sortOrder, setSortOrder] = useState(urlSort);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [totalItems, setTotalItems] = useState(0);
     const { user: currentUser } = useAuthStore();
     const [actionLoading, setActionLoading] = useState(null);
 
+    // Debounce search input
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearchTerm(searchTerm);
-            setPage(1);
-        }, 200);
+        }, 250);
 
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    const fetchUsers = async (currentPage = 1, search = debouncedSearchTerm, role = roleFilter, status = statusFilter, sort = sortOrder) => {
+    // Sync state changes -> URL Search Params
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (debouncedSearchTerm) params.set("search", debouncedSearchTerm);
+        if (roleFilter) params.set("role", roleFilter);
+        if (statusFilter) params.set("status", statusFilter);
+        if (sortOrder && sortOrder !== "DESC") params.set("sort", sortOrder);
+        if (page > 1) params.set("page", page.toString());
+
+        if (params.toString() !== searchParams.toString()) {
+            setSearchParams(params, { replace: true });
+        }
+    }, [debouncedSearchTerm, roleFilter, statusFilter, sortOrder, page, searchParams, setSearchParams]);
+
+    // Sync URL Search Params -> State (e.g. browser back/forward)
+    useEffect(() => {
+        const s = searchParams.get("search") || "";
+        const r = searchParams.get("role") || "";
+        const st = searchParams.get("status") || "";
+        const so = searchParams.get("sort") || "DESC";
+        const p = parseInt(searchParams.get("page") || "1", 10) || 1;
+
+        if (s !== searchTerm) {
+            setSearchTerm(s);
+            setDebouncedSearchTerm(s);
+        }
+        if (r !== roleFilter) setRoleFilter(r);
+        if (st !== statusFilter) setStatusFilter(st);
+        if (so !== sortOrder) setSortOrder(so);
+        if (p !== page) setPage(p);
+    }, [searchParams]);
+
+    const fetchUsers = async (currentPage = page, search = debouncedSearchTerm, role = roleFilter, status = statusFilter, sort = sortOrder) => {
         setLoading(true);
         try {
             const response = await axiosInstance.get('/user', {
@@ -71,6 +113,20 @@ export default function ManageUsers() {
         setPage(1);
     };
 
+    const handleClearSearch = () => {
+        setSearchTerm("");
+        setDebouncedSearchTerm("");
+        setPage(1);
+    };
+
+    // Update single user row in place without full table re-fetch
+    const handleUpdateUserRow = (updatedUser) => {
+        if (!updatedUser || !updatedUser.id) return;
+        setUsers((prevUsers) =>
+            prevUsers.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u))
+        );
+    };
+
     const handleRoleChange = async (userId, newRole) => {
         const confirmed = await confirmAction({
             title: "Change User Role?",
@@ -82,17 +138,20 @@ export default function ManageUsers() {
 
         setActionLoading(`${userId}-role`);
         try {
-            await axiosInstance.put(`/user/${userId}/change-role`, { role: newRole });
+            const response = await axiosInstance.put(`/user/${userId}/change-role`, { role: newRole });
+            const updatedUser = response.data?.data || response.data;
             toast.success("User role updated successfully");
-            fetchUsers(page, debouncedSearchTerm, roleFilter, statusFilter, sortOrder);
+            
+            // Row-level update without full table reload
+            setUsers((prevUsers) =>
+                prevUsers.map((u) => (u.id === userId ? { ...u, ...updatedUser, role: newRole } : u))
+            );
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to update role");
         } finally {
             setActionLoading(null);
         }
     };
-
-
 
     return (
         <div className="p-4 max-w-7xl mx-auto w-full animate-fade-in">
@@ -104,14 +163,27 @@ export default function ManageUsers() {
 
                 <div className="flex items-center gap-3 w-full md:w-auto">
                     <form onSubmit={handleSearch} className="relative flex-1 sm:flex-initial sm:w-64 md:w-72">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                         <input
                             type="text"
                             placeholder="Search by name or email..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white transition-shadow shadow-sm text-sm h-[38px]"
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setPage(1);
+                            }}
+                            className="w-full pl-10 pr-9 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white transition-shadow shadow-sm text-sm h-[38px]"
                         />
+                        {searchTerm && (
+                            <button
+                                type="button"
+                                onClick={handleClearSearch}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                                title="Clear search"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                            </button>
+                        )}
                     </form>
 
                     <button
@@ -129,6 +201,14 @@ export default function ManageUsers() {
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full" />
                         )}
                     </button>
+
+                    <Link
+                        to="/admin/users/create"
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition shadow-sm h-[38px] cursor-pointer shrink-0"
+                    >
+                        <UserPlus className="w-4 h-4" />
+                        <span className="hidden sm:inline">Register User</span>
+                    </Link>
                 </div>
             </div>
 
@@ -227,7 +307,7 @@ export default function ManageUsers() {
                                             <ActionButton
                                                 user={u}
                                                 currentUser={currentUser}
-                                                onSuccess={() => fetchUsers(page, debouncedSearchTerm, roleFilter, statusFilter, sortOrder)}
+                                                onUpdateUser={handleUpdateUserRow}
                                             />
                                         </td>
                                     </tr>

@@ -5,7 +5,7 @@ import { axiosInstance } from '../../lib/axiosInstance';
 import { confirmAction } from '../../lib/confirmAction';
 import { isSuperAdmin } from '../../lib/roles';
 
-export default function ActionButton({ user, currentUser, onSuccess }) {
+export default function ActionButton({ user, currentUser, onUpdateUser }) {
     const [statusLoading, setStatusLoading] = useState(false);
     const [resetLoading, setResetLoading] = useState(false);
 
@@ -22,7 +22,6 @@ export default function ActionButton({ user, currentUser, onSuccess }) {
         try {
             const response = await axiosInstance.post('/user/reset-link', { email });
             toast.success(response.data?.message || "Reset link sent successfully");
-            if (onSuccess) onSuccess();
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to send reset link");
         } finally {
@@ -42,9 +41,12 @@ export default function ActionButton({ user, currentUser, onSuccess }) {
 
         setStatusLoading(true);
         try {
-            await axiosInstance.put(`/user/${userId}/status`);
+            const response = await axiosInstance.put(`/user/${userId}/status`);
+            const updatedUser = response.data?.data || response.data;
             toast.success(`User ${actionText}d successfully`);
-            if (onSuccess) onSuccess();
+            if (onUpdateUser) {
+                onUpdateUser(updatedUser || { id: userId, is_active: !currentStatus });
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to toggle status");
         } finally {
