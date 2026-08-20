@@ -1,307 +1,152 @@
 import React, { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
-import TextAlign from '@tiptap/extension-text-align';
-import {
-  Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Heading2,
-  Heading3, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Unlink, Undo, Redo, RemoveFormatting
+import { 
+    Bold, Italic, Strikethrough, Heading1, Heading2, Heading3, 
+    List, ListOrdered, Quote, Undo, Redo, RemoveFormatting 
 } from 'lucide-react';
 
-const RichTextEditor = ({ value, onChange, placeholder = 'Write details...', disabled = false }) => {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [2, 3]
+export default function RichTextEditor({ value, onChange, placeholder = "Write content here..." }) {
+    const editor = useEditor({
+        extensions: [
+            StarterKit.configure({
+                heading: {
+                    levels: [1, 2, 3],
+                },
+            }),
+        ],
+        content: value || '',
+        onUpdate: ({ editor }) => {
+            const html = editor.getHTML();
+            if (onChange) {
+                onChange(html === '<p></p>' ? '' : html);
+            }
+        },
+        editorProps: {
+            attributes: {
+                class: 'prose prose-sm dark:prose-invert max-w-none p-4 min-h-[120px] max-h-[400px] overflow-y-auto outline-none text-gray-900 dark:text-gray-100 font-sans leading-relaxed',
+            },
+        },
+    });
+
+    useEffect(() => {
+        if (editor && value !== undefined) {
+            const currentContent = editor.getHTML();
+            if (value !== currentContent && !(value === '' && currentContent === '<p></p>')) {
+                editor.commands.setContent(value || '');
+            }
         }
-      }),
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          target: '_blank',
-          rel: 'noopener noreferrer',
-          class: 'text-blue-600 dark:text-blue-400 underline'
-        }
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph']
-      })
-    ],
-    content: value || '',
-    editable: !disabled,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      // If content is empty paragraph, return empty string
-      if (html === '<p></p>') {
-        onChange('');
-      } else {
-        onChange(html);
-      }
-    },
-    editorProps: {
-      attributes: {
-        class:
-          'min-h-[140px] max-h-[400px] overflow-y-auto px-4 py-3 outline-none text-sm text-gray-900 dark:text-white focus:outline-none'
-      }
-    }
-  });
+    }, [value, editor]);
 
-  // Sync editor content with external value change
-  useEffect(() => {
-    if (editor && value !== undefined) {
-      const currentHTML = editor.getHTML();
-      if (value !== currentHTML && !(value === '' && currentHTML === '<p></p>')) {
-        editor.commands.setContent(value || '', false);
-      }
-    }
-  }, [value, editor]);
+    if (!editor) return null;
 
-  // Update editable state
-  useEffect(() => {
-    if (editor) {
-      editor.setEditable(!disabled);
-    }
-  }, [disabled, editor]);
+    return (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 overflow-hidden transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+            {/* TOOLBAR */}
+            <div className="flex flex-wrap items-center gap-1 p-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300">
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Bold"
+                >
+                    <Bold className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Italic"
+                >
+                    <Italic className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleStrike().run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('strike') ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Strikethrough"
+                >
+                    <Strikethrough className="w-4 h-4" />
+                </button>
 
-  if (!editor) {
-    return null;
-  }
+                <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-  const setLink = () => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('Enter URL:', previousUrl || 'https://');
-    if (url === null) return;
-    if (url.trim() === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url.trim() }).run();
-  };
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Heading 2"
+                >
+                    <Heading2 className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Heading 3"
+                >
+                    <Heading3 className="w-4 h-4" />
+                </button>
 
-  return (
-    <div className={`border rounded-xl overflow-hidden transition-all shadow-sm ${disabled ? 'opacity-60 cursor-not-allowed bg-gray-100 dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20'
-      }`}>
-      {/* Toolbar */}
-      {!disabled && (
-        <div className="flex flex-wrap items-center gap-1 p-2 bg-gray-100 dark:bg-gray-900/60 border-b border-gray-200 dark:border-gray-700/80 select-none">
-          {/* Bold */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('bold')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Bold"
-          >
-            <Bold className="w-4 h-4" />
-          </button>
+                <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-          {/* Italic */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('italic')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Italic"
-          >
-            <Italic className="w-4 h-4" />
-          </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('bulletList') ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Bullet List"
+                >
+                    <List className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('orderedList') ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Ordered List"
+                >
+                    <ListOrdered className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                    className={`p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer ${editor.isActive('blockquote') ? 'bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold' : ''}`}
+                    title="Quote"
+                >
+                    <Quote className="w-4 h-4" />
+                </button>
 
-          {/* Underline */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('underline')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Underline"
-          >
-            <UnderlineIcon className="w-4 h-4" />
-          </button>
+                <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-          {/* Strike */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('strike')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Strikethrough"
-          >
-            <Strikethrough className="w-4 h-4" />
-          </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
+                    className="p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer text-gray-500"
+                    title="Clear Formatting"
+                >
+                    <RemoveFormatting className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().undo().run()}
+                    disabled={!editor.can().undo()}
+                    className="p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer disabled:opacity-40"
+                    title="Undo"
+                >
+                    <Undo className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().redo().run()}
+                    disabled={!editor.can().redo()}
+                    className="p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer disabled:opacity-40"
+                    title="Redo"
+                >
+                    <Redo className="w-4 h-4" />
+                </button>
+            </div>
 
-          <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
-
-          {/* H2 */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('heading', { level: 2 })
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Heading 2"
-          >
-            <Heading2 className="w-4 h-4" />
-          </button>
-
-          {/* H3 */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('heading', { level: 3 })
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Heading 3"
-          >
-            <Heading3 className="w-4 h-4" />
-          </button>
-
-          <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
-
-          {/* Bullet List */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('bulletList')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Bullet List"
-          >
-            <List className="w-4 h-4" />
-          </button>
-
-          {/* Ordered List */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('orderedList')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Numbered List"
-          >
-            <ListOrdered className="w-4 h-4" />
-          </button>
-
-          <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
-
-          {/* Alignments */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive({ textAlign: 'left' })
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Align Left"
-          >
-            <AlignLeft className="w-4 h-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive({ textAlign: 'center' })
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Align Center"
-          >
-            <AlignCenter className="w-4 h-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive({ textAlign: 'right' })
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Align Right"
-          >
-            <AlignRight className="w-4 h-4" />
-          </button>
-
-          <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1" />
-
-          {/* Link */}
-          <button
-            type="button"
-            onClick={setLink}
-            className={`p-1.5 rounded-lg text-xs font-semibold transition ${editor.isActive('link')
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
-              }`}
-            title="Insert Link"
-          >
-            <LinkIcon className="w-4 h-4" />
-          </button>
-
-          {editor.isActive('link') && (
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().unsetLink().run()}
-              className="p-1.5 rounded-lg text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
-              title="Remove Link"
-            >
-              <Unlink className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* Clear Formatting */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
-            className="p-1.5 rounded-lg text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-            title="Clear Formatting"
-          >
-            <RemoveFormatting className="w-4 h-4" />
-          </button>
-
-          <div className="ml-auto flex items-center gap-1">
-            {/* Undo */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().undo().run()}
-              disabled={!editor.can().undo()}
-              className="p-1.5 rounded-lg text-xs text-gray-700 dark:text-gray-300 disabled:opacity-30 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-              title="Undo"
-            >
-              <Undo className="w-4 h-4" />
-            </button>
-
-            {/* Redo */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().redo().run()}
-              disabled={!editor.can().redo()}
-              className="p-1.5 rounded-lg text-xs text-gray-700 dark:text-gray-300 disabled:opacity-30 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-              title="Redo"
-            >
-              <Redo className="w-4 h-4" />
-            </button>
-          </div>
+            {/* EDITOR AREA */}
+            <EditorContent editor={editor} />
         </div>
-      )}
-
-      {/* Editor Content Area */}
-      <div className="rich-text-content">
-        <EditorContent editor={editor} />
-      </div>
-    </div>
-  );
-};
-
-export default RichTextEditor;
+    );
+}
