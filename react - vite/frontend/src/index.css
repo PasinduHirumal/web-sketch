@@ -139,19 +139,6 @@
   margin-bottom: 0.5rem !important;
 }
 
-
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4) !important;
-}
-
-.dark *::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-.dark *::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4) !important;
-}
-
 /* Tiptap / Rich Text Styles */
 .ProseMirror {
   outline: none !important;
