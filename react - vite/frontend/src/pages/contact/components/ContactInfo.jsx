@@ -5,7 +5,7 @@ export default function ContactInfo() {
   const whatsappNumber = import.meta.env.VITE_APP_WHATSAPP_NUMBER;
   const email = import.meta.env.VITE_APP_EMAIL;
   const address = import.meta.env.VITE_APP_ADDRESS;
-  const waMeLink = `https://wa.me/${whatsappNumber.replace(/\+/g, '')}`;
+  const waMeLink = whatsappNumber ? `https://wa.me/${whatsappNumber.replace(/\+/g, '')}` : '#';
 
   return (
     <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-blue-500/30 transition-colors shadow-sm">

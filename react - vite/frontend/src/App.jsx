@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { lazy } from "react";
 import { Route, useLocation, Navigate } from "react-router-dom";
 import useAuthStore from "./lib/authStore";
 import { isAdmin, isSuperAdmin } from "./lib/roles";

@@ -22,7 +22,7 @@ axiosInstance.interceptors.request.use((config) => {
                 config.headers.Authorization = `Bearer ${state.accessToken}`;
             }
         }
-    } catch (e) {
+    } catch {
         // ignore JSON parse error
     }
     return config;

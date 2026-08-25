@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LogOut, LayoutDashboard, ChevronDown, ShoppingBag } from "lucide-react";
+import { LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { isAdmin, isSuperAdmin } from "../lib/roles";
 

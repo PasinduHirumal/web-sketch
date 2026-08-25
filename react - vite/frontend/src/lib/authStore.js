@@ -88,7 +88,7 @@ const useAuthStore = create(
                     set({ accessToken: null, user: null });
                     const errorMsg = error.response?.data?.message;
                     const message = Array.isArray(errorMsg) ? errorMsg[0] : (errorMsg || "Session refresh failed");
-                    throw new Error(message);
+                    throw new Error(message, { cause: error });
                 } finally {
                     set({ isAuthLoading: false });
                 }

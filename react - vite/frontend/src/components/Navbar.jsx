@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen, Menu, X, Sun, Moon, LogOut, User, LayoutDashboard, ShoppingBag } from "lucide-react";
+import { BookOpen, Menu, X, LogOut, User, LayoutDashboard, ShoppingBag } from "lucide-react";
 import useAuthStore from "../lib/authStore";
 import { confirmAction } from "../lib/confirmAction";
 import { useState, useEffect } from "react";

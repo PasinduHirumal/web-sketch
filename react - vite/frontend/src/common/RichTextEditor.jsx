@@ -25,6 +25,7 @@ export default function RichTextEditor({ value, onChange, placeholder = "Write c
         editorProps: {
             attributes: {
                 class: 'prose prose-sm dark:prose-invert max-w-none p-4 min-h-[120px] max-h-[400px] overflow-y-auto outline-none text-gray-900 dark:text-gray-100 font-sans leading-relaxed',
+                'data-placeholder': placeholder,
             },
         },
     });
