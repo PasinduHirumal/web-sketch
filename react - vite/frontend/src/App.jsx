@@ -27,7 +27,7 @@ const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 
 // Admin
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const ManageUsers = lazy(() => import("./pages/admin/ManageUsers"));
+const ManageUsers = lazy(() => import("./pages/admin/user/ManageUsers"));
 
 export default function App() {
   const user = useAuthStore((s) => s.user);

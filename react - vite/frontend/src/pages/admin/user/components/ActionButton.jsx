@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Ban, CheckCircle, KeyRound, Loader2 } from 'lucide-react';
-import { axiosInstance } from '../../lib/axiosInstance';
-import { confirmAction } from '../../lib/confirmAction';
-import { isSuperAdmin } from '../../lib/roles';
+import { axiosInstance } from '../../../../lib/axiosInstance';
+import { confirmAction } from '../../../../lib/confirmAction';
+import { isSuperAdmin } from '../../../../lib/roles';
 
 export default function ActionButton({ user, currentUser, onUpdateUser }) {
     const [statusLoading, setStatusLoading] = useState(false);

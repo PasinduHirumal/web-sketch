@@ -1,6 +1,6 @@
 import React from 'react';
 import { Shield, CheckCircle2, ArrowDownUp, ChevronDown } from 'lucide-react';
-import { UserRole } from '../../lib/roles';
+import { UserRole } from '../../../../lib/roles';
 
 export default function Filters({
     roleFilter,

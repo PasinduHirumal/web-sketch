@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Mail, Shield, ShieldAlert, ShieldCheck, Search, Filter, CheckCircle, Ban, UserPlus, X } from 'lucide-react';
-import { axiosInstance } from '../../lib/axiosInstance';
-import { confirmAction } from '../../lib/confirmAction';
-import { UserRole, isSuperAdmin } from '../../lib/roles';
-import useAuthStore from '../../lib/authStore';
-import ActionButton from '../../components/managUser/ActionButton';
-import AdminFilterMenu from '../../common/AdminFilterMenu';
-import Filters from '../../components/managUser/Filters';
+import { axiosInstance } from '../../../lib/axiosInstance';
+import { confirmAction } from '../../../lib/confirmAction';
+import { UserRole, isSuperAdmin } from '../../../lib/roles';
+import useAuthStore from '../../../lib/authStore';
+import ActionButton from './components/ActionButton';
+import Filters from './components/Filters';
+import AdminFilterMenu from '../../../common/AdminFilterMenu';
 
 export default function ManageUsers() {
     const [searchParams, setSearchParams] = useSearchParams();
