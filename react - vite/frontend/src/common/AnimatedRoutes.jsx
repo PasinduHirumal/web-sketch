@@ -14,9 +14,10 @@ const pageVariants = {
 };
 
 export default function AnimatedRoutes({ location, children }) {
-    // Use a static key for admin routes so the layout doesn't unmount
+    // Use a static key for admin and auth routes so the layout/components don't unmount and flash on sub-navigation
     const isAdmin = location.pathname.startsWith('/admin');
-    const animationKey = isAdmin ? 'admin-layout' : location.pathname;
+    const isAuth = location.pathname === '/login' || location.pathname === '/register';
+    const animationKey = isAdmin ? 'admin-layout' : isAuth ? 'auth-layout' : location.pathname;
 
     return (
         <AnimatePresence mode="wait" initial={false}>

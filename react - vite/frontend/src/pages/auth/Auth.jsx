@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuthStore from "../../lib/authStore";
@@ -9,15 +9,10 @@ import GoogleLoginButton from "../../common/GoogleLoginButton";
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSignUp, setIsSignUp] = useState(location.pathname === "/register");
-
-  useEffect(() => {
-    setIsSignUp(location.pathname === "/register");
-  }, [location.pathname]);
+  const isSignUp = location.pathname === "/register";
 
   const toggleMode = (signUpMode) => {
-    setIsSignUp(signUpMode);
-    window.history.replaceState(null, "", signUpMode ? "/register" : "/login");
+    navigate(signUpMode ? "/register" : "/login");
   };
 
   // Login form state

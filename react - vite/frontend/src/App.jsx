@@ -21,8 +21,7 @@ const Contact = lazy(() => import("./pages/contact/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Auth
-const Login = lazy(() => import("./pages/auth/Login"));
-const Register = lazy(() => import("./pages/auth/Register"));
+const Auth = lazy(() => import("./pages/auth/Auth"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 
@@ -63,11 +62,11 @@ export default function App() {
         <Route element={<FullPageLayout />}>
           <Route
             path="/login"
-            element={!user ? <Login /> : <Navigate to="/" replace />}
+            element={!user ? <Auth /> : <Navigate to="/" replace />}
           />
           <Route
             path="/register"
-            element={!user ? <Register /> : <Navigate to="/" replace />}
+            element={!user ? <Auth /> : <Navigate to="/" replace />}
           />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
