@@ -17,7 +17,7 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const [totalRes] = await Promise.all([
-          axiosInstance.get("/user", { params: { limit: 1 } }),
+          axiosInstance.get("/users", { params: { limit: 1 } }),
         ]);
 
         const extractTotal = (res) => {

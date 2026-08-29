@@ -81,7 +81,7 @@ export default function ManageUsers() {
     const fetchUsers = async (currentPage = page, search = debouncedSearchTerm, role = roleFilter, status = statusFilter, sort = sortOrder) => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get('/user', {
+            const response = await axiosInstance.get('/users', {
                 params: {
                     page: currentPage,
                     limit: 10,
@@ -138,7 +138,7 @@ export default function ManageUsers() {
 
         setActionLoading(`${userId}-role`);
         try {
-            const response = await axiosInstance.put(`/user/${userId}/change-role`, { role: newRole });
+            const response = await axiosInstance.put(`/users/${userId}/change-role`, { role: newRole });
             const updatedUser = response.data?.data || response.data;
             toast.success("User role updated successfully");
             

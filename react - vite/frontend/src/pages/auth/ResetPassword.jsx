@@ -43,9 +43,9 @@ export default function ResetPassword() {
     }
 
     try {
-      await axiosInstance.post("/user/reset-password", {
+      await axiosInstance.post("/users/reset-password", {
         token,
-        newPassword: formData.newPassword
+        new_password: formData.newPassword
       });
       toast.success("Password has been reset successfully. Redirecting...");
       setTimeout(() => {

@@ -20,7 +20,7 @@ export default function ActionButton({ user, currentUser, onUpdateUser }) {
 
         setResetLoading(true);
         try {
-            const response = await axiosInstance.post('/user/reset-link', { email });
+            const response = await axiosInstance.post('/users/reset-link', { email });
             toast.success(response.data?.message || "Reset link sent successfully");
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to send reset link");
@@ -41,7 +41,7 @@ export default function ActionButton({ user, currentUser, onUpdateUser }) {
 
         setStatusLoading(true);
         try {
-            const response = await axiosInstance.put(`/user/${userId}/status`);
+            const response = await axiosInstance.put(`/users/${userId}/status`);
             const updatedUser = response.data?.data || response.data;
             toast.success(`User ${actionText}d successfully`);
             if (onUpdateUser) {
