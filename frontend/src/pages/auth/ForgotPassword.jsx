@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.post("/users/reset-link", { email });
+      const response = await axiosInstance.post("/users/reset-password-link", { email });
       toast.success(response.data?.message || "Reset link sent successfully!");
       setEmail("");
       setTimeout(() => {
